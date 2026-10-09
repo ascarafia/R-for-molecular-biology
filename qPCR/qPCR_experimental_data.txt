@@ -1,0 +1,17 @@
+TYPE	VALUE
+CellLine	WT
+CellLine	KO1
+CellLine	KO2
+Conditions	T0
+Conditions	T3
+Conditions	T7
+Conditions	T10
+Conditions	T14
+Genes	EOMES
+Genes	MESP1
+Genes	GATA4
+Genes	TBX20
+Genes	LINC881
+Genes	NKX2-5
+Housekeeping	HPRT1
+Housekeeping	RPL7
