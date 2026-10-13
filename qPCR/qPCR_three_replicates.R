@@ -188,7 +188,7 @@ calcular_resumen <- function(dframe, relative){
 
 #---- CALCULATE ----
 
-data <- analiza_mis_reals(metafile = opt$file, expfile = opt$experiment)
+data <- analiza_mis_reals(metafile = opt$files, expfile = opt$experiment)
 rel <- transformar_log(data)
 resumen <- calcular_resumen(data, relative = opt$relative)
 
@@ -244,15 +244,15 @@ my_pal <- colorRampPalette(c("gray35","lightslateblue","blueviolet","darkorchid1
 
 
 plot <- ggplot(resumen, aes(x=Treatment, y=REL_EXP, fill=`Cell_line`, color=`Cell_line`, group=`Cell_line`)) +
-  geom_line(linetype = "dashed", size=0.7,
+  geom_line(linetype = "dashed", linewidth=0.7,
             position = position_dodge2(width = 0.4), alpha = 0.6)+
   geom_point(size = 4, alpha = 0.8, shape = 21,
              position = position_dodge2(width = 0.4)) +
   geom_errorbar(aes(ymin=REL_EXP-se, ymax=REL_EXP+se),
-                color="black", size=0.2,
+                color="black", linewidth=0.2,
                 width=0.4, position = position_dodge2(width = 1))+
   facet_wrap(~ Amplicon, scales = "free_y")+
-  ylab(paste0("Fold Change \n(relative to ", relative ,")"))+
+  ylab(paste0("Fold Change \n(relative to ", opt$relative ,")"))+
   scale_fill_manual(values = my_pal[1:linenum])+
   scale_color_manual(values = my_pal[1:linenum])
 
