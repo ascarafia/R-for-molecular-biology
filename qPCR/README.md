@@ -75,6 +75,10 @@ If you select timeseries to be "yes" a dashed line Will be added to your plot, c
 
 IMPORTANT NOTE: This is done for 1 replicate of a 3-replicate experiment. The plot is meant to be a visual help for you to get a general idea how the experiment went. Assuming you calculate the values for all 3 biological replicates and include the statistical analysis, plotting normalized expresión of genes is perfectly reasonable and correct! However, many scientist struggle to quickly interpret them. For that reason, I suggest once you have all 3 replicates you make a final plot. You can do so with the second script that calculates and plots the mean gene expression relative to a control, including the statistical values.
 
+<img width="700" alt="first_script" src="https://github.com/user-attachments/assets/adcb567c-465b-4a91-a077-d27e33b02632" />
+
+
+
 
 
 
@@ -146,6 +150,8 @@ The script generates two tables and one plot (for now).
 2 "table_relative_summary.txt": with the calculated mean of each gene, cell line and condition, plus the standard error of the mean, standard deviation and confidence interval.
 
 3 "plot_relative_expression.pdf": plot of the mean mentioned above plus an errorbar of the standard error of the mean.
+
+<img width="500"  alt="second_script" src="https://github.com/user-attachments/assets/e761e773-4f24-4750-8a28-dfdb72597121" />
 
 
 
