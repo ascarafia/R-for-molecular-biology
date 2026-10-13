@@ -26,7 +26,8 @@ options(digits=5)
 option_list <- list(make_option(c("--files"), action = "store", type = "character"),
                     make_option(c("--experiment"), action = "store", type = "character"),
                     make_option(c("--relative"), action = "store", type = "character"),
-                    make_option(c("--timeseries"), action = "store", type = "character")
+                    make_option(c("--timeseries"), action = "store", type = "character"),
+                    make_option(c("--include_all"), action = "store", type = "character")
 )
 
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -188,6 +189,7 @@ calcular_resumen <- function(dframe, relative){
 #---- CALCULATE ----
 
 data <- analiza_mis_reals(metafile = opt$file, expfile = opt$experiment)
+rel <- transformar_log(data)
 resumen <- calcular_resumen(data, relative = opt$relative)
 
 write.table(resumen, "table_relative_summary.txt",sep = "\t", quote = F, row.names = F)
@@ -211,7 +213,7 @@ theme_set(theme_bw()+
 # Number of subplots to define width of images
 
 genenum <- length(unique(data$Amplicon))
-condit <- length(unique(data$condition))
+condit <- length(unique(data$Treatment))
 linenum <- length(unique(data$Cell_line))
 
 # height of plot is calculated by number of genes to be plotted
@@ -250,7 +252,7 @@ plot <- ggplot(resumen, aes(x=Treatment, y=REL_EXP, fill=`Cell_line`, color=`Cel
                 color="black", size=0.2,
                 width=0.4, position = position_dodge2(width = 1))+
   facet_wrap(~ Amplicon, scales = "free_y")+
-  ylab(paste0("Fold Change \n(relative to", relative ,")"))+
+  ylab(paste0("Fold Change \n(relative to ", relative ,")"))+
   scale_fill_manual(values = my_pal[1:linenum])+
   scale_color_manual(values = my_pal[1:linenum])
 
@@ -260,8 +262,13 @@ if (opt$timeseries == "yes") {
               position = position_dodge2(width = 0.4))
 }
 
+if (opt$include_all == "yes") {
+  plot <- plot +
+    geom_point(data = rel, size = 1, alpha = 0.5, shape = 21,
+               position = position_dodge2(width = 0.4))
+}
+
 pdf("plot_relative_expression.pdf", height = he, width = wi)
 print(plot)
 dev.off()
-
 
