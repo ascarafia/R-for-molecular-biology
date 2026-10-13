@@ -1,5 +1,5 @@
 
-#----- Setting libraries and options -----
+#---- SETTING LIBRARIES AND OPTIONS -----
 
 cran_packages <- c("optparse", "dplyr", "tidyr", "ggplot2", "readxl")
 
@@ -25,7 +25,8 @@ options(digits=5)
 option_list <- list(make_option(c("--file"), action = "store", type = "character"),
                     make_option(c("--file2"), action = "store", type = "character", default = NA),
                     make_option(c("--housekeeping"), action = "store", type = "character"),
-                    make_option(c("--housekeeping2"), action = "store", type = "character", default = NA)
+                    make_option(c("--housekeeping2"), action = "store", type = "character", default = NA),
+                    make_option(c("--timeseries"), action = "store", type = "character")
 )
 
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -52,14 +53,12 @@ importar_tabla <- function(path){
   return(misdatos)
 }
 
-
 promedios <- function(dframe){
   dframe <- dframe %>% group_by(Amplicon, Sample) %>%
     filter(Sample != "B")  %>%
     mutate(PROMEDIO = mean(N0, na.rm = TRUE))
   return(dframe)
 }
-
 
 media_geometrica <- function(dframe, housekeepings){
   geomean <- filter(dframe, Amplicon %in% c(housekeepings)) %>% 
@@ -74,15 +73,13 @@ media_geometrica <- function(dframe, housekeepings){
   return(mediaGeom)
 }
 
-
 expresion_normalizada <- function(dframe){
   expresion <- dframe %>% mutate(EXP_NORM = PROMEDIO / GEO_MEAN) %>%
     filter(row_number() %% 2 == 1) %>%
     return(expresion)
 }
 
-
-analiza_mis_reals <- function(camino1, camino2 = NA, hk1, hk2 = NA){
+analiza_mi_real <- function(camino1, camino2 = NA, hk1, hk2 = NA){
   if(is.na(hk2)){
     housekeepings <- c(hk1)
   } else {
@@ -104,7 +101,7 @@ analiza_mis_reals <- function(camino1, camino2 = NA, hk1, hk2 = NA){
   return(quinto)
 }
 
-#------- Theme set ----------
+#---- SETTING THEME ----
 
 theme_set(theme_bw()+
             theme(plot.title = element_text(size = 18),
@@ -117,11 +114,9 @@ theme_set(theme_bw()+
                   strip.background=element_blank(),
                   strip.text = element_text(size=11, face="bold")))
 
-my_pal <- colorRampPalette(c('#5e4fa2ff','#358abcff','#5db2acff',
-                             '#7ecaa5ff','#ddf19aff','#fff9b6ff',
-                             '#fca65dff','#ed6346ff','#9e0142ff'))(9)
 
-# - - - - Code to run from RStudio  - - - - -----
+#---- UNCOMMENT TO RUN LOCALLY ON RStudio ----
+
 # Uncomment to run from RStudio
 #work.space <- dirname(rstudioapi::getSourceEditorContext()$path)
 #setwd(work.space)
@@ -130,44 +125,63 @@ my_pal <- colorRampPalette(c('#5e4fa2ff','#358abcff','#5db2acff',
 #path2 <- "if your samples are across two runs, path to second file"
 #hk1 <- "name of housekeeping gene" #do not use spaces for gene names
 #hk2 <- "name of second housekeeping gene" #do not use spaces for gene names
-#data <- analiza_mis_reals(camino1 = path, camino2 = path2, hk1= hk1, hk2= hk2)
+#data <- analiza_mi_real(camino1 = path, camino2 = path2, hk1= hk1, hk2= hk2)
 
+#---- CALCULATE ----
 
-data <- analiza_mis_reals(camino1 = opt$file, camino2 = opt$file2, hk1= opt$housekeeping, hk2= opt$housekeeping2)
+data <- analiza_mi_real(camino1 = opt$file, camino2 = opt$file2, hk1= opt$housekeeping, hk2= opt$housekeeping2)
 
-data <- data %>% separate(Sample, into = c("Cell_Line", "Treatment"), sep = " ", remove = F)
-write.csv(data, "Normalized_expression_table.cvs", quote = F, row.names = F)
+data <- data %>% separate(Sample, into = c("Cell line", "Treatment"), sep = " ", remove = F) %>%
+  select(-name)
+write.table(data, "table_normalized_expression.txt",sep = "\t", quote = F, row.names = F)
 data$Treatment <- factor(data$Treatment,
   levels = unique(data$Treatment)[order(readr::parse_number(as.character(unique(data$Treatment))))]
 )
 
+
 # Number of subplots to define width of images
+
 genenum <- length(unique(data$Amplicon))
-linenum <- length(unique(data$Cell_Line))
+linenum <- length(unique(data$`Cell line`))
 
 if (genenum <=3 ){
-  he = 4
+  he = 3
 } else if (genenum <=6){
-  he = 8
+  he = 6
 } else if (genenum <=9){
-  he = 12
+  he = 9
 }
 
 if (genenum >= 3){
-  wi = 12
+  wi = (9 + condit/5)
 } else if (genenum == 2){
-  wi = 8
+  wi = (6 + condit/5)
 } else {
-  wi = 4
+  wi = (3 + condit/5)
 }
 
+#Define colors for custom palette
 
-pdf("Normalized_expression_plot.pdf", height = he, width = wi)
-ggplot(data, aes(x=Treatment,y=EXP_NORM, fill=Cell_Line, color=Cell_Line))+
+my_pal <- colorRampPalette(c("gray35","lightslateblue","darkorchid1"))(linenum+1)
+
+
+#---- mAKING THE PLOT ----
+
+
+plot <- ggplot(data, aes(x=Treatment,y=EXP_NORM, fill=`Cell line`, color=`Cell line`, group=`Cell line`))+
   facet_wrap(~Amplicon, scales = "free_y")+
-  geom_point(shape=21, size = 4, alpha=0.7)+
-  scale_color_manual(values = my_pal)+
-  scale_fill_manual(values = my_pal)+
-  scale_y_log10()
-dev.off()
+  geom_point(shape=21, size = 4, alpha=0.7,position = position_dodge2(width = 0.4))+
+  scale_color_manual(values = my_pal[1:linenum])+
+  scale_fill_manual(values = my_pal[1:linenum])+
+  scale_y_log10()+
+  ylab(paste0("Normalized expression \n(log scale)"))
 
+if (opt$timeseries == "yes") {
+  plot <- plot +
+    geom_line(linetype = "dashed", linewidth = 0.7, alpha = 0.6,
+              position = position_dodge2(width = 0.4))
+}
+
+pdf("plot_normalized_expression.pdf", height = he, width = wi)
+print(plot)
+dev.off()
