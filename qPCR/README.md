@@ -65,7 +65,7 @@ Rscript <script name> --file <name_file1.xls> --file2 <name_file2.xls> --houseke
 
 Example run:
 ```
-Rscript qPCR_one_replicate.R --file 2107_N1_real1.xls --file2 2107_N1_real2.xls --housekeeping RPL7 --housekeeping2 HPRT1 --timeseries yes
+Rscript qPCR_one_replicate.R --file data_tables/2107_N1_real1.xls --file2 data_tables/2107_N1_real2.xls --housekeeping RPL7 --housekeeping2 HPRT1 --timeseries yes
 ```
 
 OUTPUTS:

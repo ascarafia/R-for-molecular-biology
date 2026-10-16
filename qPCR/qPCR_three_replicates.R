@@ -204,7 +204,7 @@ theme_set(theme_bw()+
                   axis.title.y = element_text(size = 14),
                   axis.text.y = element_text(size = 12),
                   axis.title.x = element_text(size = 15),
-                  axis.text.x = element_text(size = 14),
+                  axis.text.x = element_text(size = 12, angle = 40, vjust = 1, hjust=1),
                   panel.border = element_rect(colour = "black", fill = NA),
                   strip.background=element_blank(),
                   strip.text = element_text(size=11, face="bold")))
@@ -225,13 +225,13 @@ if (genenum <=3 ){
   he = 9
 }
 
-# width is calculated by number of genes and ammount of conditions
+# width is calculated by number of genes and amount of conditions
 if (genenum >= 3){
-  wi = (9 + condit/5)
+  wi = 9 
 } else if (genenum == 2){
-  wi = (6 + condit/5)
+  wi = 6
 } else {
-  wi = (3 + condit/5)
+  wi = 3 
 }
 
 

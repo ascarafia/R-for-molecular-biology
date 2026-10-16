@@ -109,7 +109,7 @@ theme_set(theme_bw()+
                   axis.title.y = element_text(size = 14),
                   axis.text.y = element_text(size = 12),
                   axis.title.x = element_text(size = 15),
-                  axis.text.x = element_text(size = 14),
+                  axis.text.x = element_text(size = 12, angle = 40, vjust = 1, hjust=1),
                   panel.border = element_rect(colour = "black", fill = NA),
                   strip.background=element_blank(),
                   strip.text = element_text(size=11, face="bold")))
@@ -142,6 +142,7 @@ data$Treatment <- factor(data$Treatment,
 # Number of subplots to define width of images
 
 genenum <- length(unique(data$Amplicon))
+condit <- length(unique(data$Treatment))
 linenum <- length(unique(data$`Cell line`))
 
 if (genenum <=3 ){

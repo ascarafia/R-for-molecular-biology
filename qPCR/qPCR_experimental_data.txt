@@ -1,11 +1,11 @@
 TYPE	VALUE
 CellLine	WT
 CellLine	KO1
-Conditions	T0
-Conditions	T3
-Conditions	T7
-Conditions	T10
-Conditions	T14
+Conditions	day0
+Conditions	day3
+Conditions	day7
+Conditions	day10
+Conditions	day14
 Genes	LINC881
 Genes	NKX2-5
 Housekeeping	HPRT1
