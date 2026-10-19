@@ -39,6 +39,11 @@ example:
 | KO day2 |
 
 
+**Print help message**
+For all scripts, you can print a help message to see the how to run:
+```bash
+Rscript <script name> --help
+```
 
 
 
@@ -58,10 +63,6 @@ First, the mean of the technical replicates is calculated for all genes.
 If 2 housekeeping genes are used, the geometrical mean of both is calculated.
 Finally, data is normalized with the housekeeping gene/s provided.
 
-Arguments needed:
-```bash
-Rscript <script name> --file <name_file1.xls> --file2 <name_file2.xls> --housekeeping <GENE1> --housekeeping2 <GENE2> --timeseries [yes/no]
-```
 
 Example run:
 ```
