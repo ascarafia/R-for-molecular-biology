@@ -1,7 +1,42 @@
 
+#---- SETTING HELP MESSAGE AND OPTIONS -----
+
+if (!requireNamespace("optparse", quietly = TRUE)) {
+    install.packages("optparse")
+  }
+
+suppressPackageStartupMessages({
+  library("optparse")
+})
+
+
+option_list <- list(make_option("--files", type = "character", metavar = "FILE",
+                                help = "Metadata table: path to qPCR files and replicate number"),
+                    make_option("--experiment", type = "character", metavar = "FILE",
+                                help = "Experiment table: cell lines, conditions, genes, housekeeping"),
+                    make_option("--relative", type = "character", metavar = "STR",
+                                help = "Relativize to 'control' or 'cell_line' (no default specified)"),
+                    make_option("--timeseries", type = "character", default = "no", metavar = "yes/no",
+                                help = "Connect time points with a line (default: %default)"),
+                    make_option("--include_all", type = "character", default = "no", metavar = "yes/no",
+                                help = "Also plot individual replicates (default: %default)")
+)
+
+parser <- OptionParser(
+  usage = "Rscript qPCR_three_replicates.R --files FILE --experiment FILE --relative [control/cell_line] [options] \n",
+  description = "Description: \n Calculates mean relative expression (log scale) from LinRegPCR output. \n Normalices expression from 1 or 2 housekeeping genes.",
+  option_list = option_list
+)
+opt <- parse_args(parser)
+
+if (is.null(opt$files) || is.null(opt$experiment)) {
+  print_help(parser)
+  quit(status = 1)
+}
+
 #---- SETTING LIBARIES AND OPTIONS -----
 
-cran_packages <- c("optparse", "dplyr", "tidyr", "ggplot2", "readxl")
+cran_packages <- c("dplyr", "tidyr", "ggplot2", "readxl")
 
 for (package in cran_packages) {
   if (!requireNamespace(package, quietly = TRUE)) {
@@ -10,7 +45,6 @@ for (package in cran_packages) {
 }
 
 suppressPackageStartupMessages({
-  library("optparse")
   library("dplyr")
   library("tidyr")
   library("ggplot2")
@@ -21,16 +55,6 @@ options(scipen = 999)
 options(digits=5)
 
 
-# - - - - Setting arguments from command line (comment to run locally)
-
-option_list <- list(make_option(c("--files"), action = "store", type = "character"),
-                    make_option(c("--experiment"), action = "store", type = "character"),
-                    make_option(c("--relative"), action = "store", type = "character"),
-                    make_option(c("--timeseries"), action = "store", type = "character"),
-                    make_option(c("--include_all"), action = "store", type = "character")
-)
-
-opt <- parse_args(OptionParser(option_list = option_list))
 
 
 #---- FUNCIONES ----
@@ -245,8 +269,6 @@ my_pal <- colorRampPalette(c("gray35","lightslateblue","blueviolet","darkorchid1
 
 
 plot <- ggplot(resumen, aes(x=Treatment, y=REL_EXP, fill=`Cell_line`, color=`Cell_line`, group=`Cell_line`)) +
-  geom_line(linetype = "dashed", linewidth=0.7,
-            position = position_dodge2(width = 0.4), alpha = 0.6)+
   geom_point(size = 4, alpha = 0.8, shape = 21,
              position = position_dodge2(width = 0.4)) +
   geom_errorbar(aes(ymin=REL_EXP-se, ymax=REL_EXP+se),

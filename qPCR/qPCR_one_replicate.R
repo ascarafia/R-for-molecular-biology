@@ -1,7 +1,49 @@
 
+
+
+
+#---- SETTING HELP MESSAGE AND OPTIONS -----
+
+if (!requireNamespace("optparse", quietly = TRUE)) {
+  install.packages("optparse")
+}
+
+suppressPackageStartupMessages({
+  library("optparse")
+})
+
+option_list <- list(make_option("--file", type = "character", metavar = "FILE",
+                                help = "Path to qPCR .xls file"),
+                    make_option("--file2", type = "character", default = NA, metavar = "FILE",
+                                help = "Path to second qPCR .xls file, if needed"),
+                    make_option("--housekeeping", type = "character", metavar = "STR",
+                                help = "Housekeeping gene to use for normalization (e.g. RPL7)"),
+                    make_option("--housekeeping2", type = "character", default = NA, metavar = "STR",
+                                help = "Second housekeeping gene to use for normalization (e.g. GAPDH)"),
+                    make_option("--timeseries", type = "character", default = "no", metavar = "yes/no",
+                                help = "Connect time points with a line (default: %default)")
+)
+
+
+parser <- OptionParser(
+  usage = "Rscript qPCR_one_replicate.R --file FILE --housekeeping STR [options] \n",
+  description = "Description: \n Calculates normalized expression (log10 scale) from LinRegPCR output. 
+  Calculates averages between experimental replicates. 
+  Normalices and plots expression normalized to 1 or 2 housekeeping genes.",
+  option_list = option_list
+)
+opt <- parse_args(parser)
+
+opt <- parse_args(OptionParser(option_list = option_list))
+if (is.null(opt$file) || is.null(opt$housekeeping)) {
+  print_help(parser)
+  quit(status = 1)
+}
+
+
 #---- SETTING LIBRARIES AND OPTIONS -----
 
-cran_packages <- c("optparse", "dplyr", "tidyr", "ggplot2", "readxl")
+cran_packages <- c("dplyr", "tidyr", "ggplot2", "readxl")
 
 for (package in cran_packages) {
   if (!requireNamespace(package, quietly = TRUE)) {
@@ -10,7 +52,6 @@ for (package in cran_packages) {
 }
 
 suppressPackageStartupMessages({
-  library("optparse")
   library("dplyr")
   library("tidyr")
   library("ggplot2")
@@ -19,17 +60,6 @@ suppressPackageStartupMessages({
 
 options(scipen = 999)
 options(digits=5)
-
-
-# - - - - 
-option_list <- list(make_option(c("--file"), action = "store", type = "character"),
-                    make_option(c("--file2"), action = "store", type = "character", default = NA),
-                    make_option(c("--housekeeping"), action = "store", type = "character"),
-                    make_option(c("--housekeeping2"), action = "store", type = "character", default = NA),
-                    make_option(c("--timeseries"), action = "store", type = "character")
-)
-
-opt <- parse_args(OptionParser(option_list = option_list))
 
 
 #---- FUNCTIONS ----
