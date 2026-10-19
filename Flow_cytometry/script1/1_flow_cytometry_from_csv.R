@@ -1,5 +1,35 @@
 ##############################################
-# - - - - Setting libraries - - - - -----
+#---- Adding help message ---- 
+# Ignore this first section to run from R Studio
+
+if (!requireNamespace("optparse", quietly = TRUE)) {
+  install.packages("optparse")
+}
+
+suppressPackageStartupMessages({
+  library("optparse")
+})
+
+
+option_list <- list(make_option("--meta_file", type = "character", metavar = "FILE", help = "Metadata table: sample and psth to the .csv file."),
+                    make_option("--channel1", type = "character", metavar = "STR", help = "Name of channel 1, with . instead of - (e.g. FL1.A)"),
+                    make_option("--channel2", type = "character", metavar = "STR", help = "Name of channel 2, with . instead of - (e.g. FL2.A)"),
+                    make_option("--gene1", type = "character", metavar = "STR", help = "Name of gene or protein measured in channel 1 (e.g. GFP)"),
+                    make_option("--gene2", type = "character", metavar = "STR", help = "Name of gene or protein measured in channel 2 (e.g. GAPDH)")
+)
+
+parser <- OptionParser(
+  usage = "Rscript 1_flow_cytometry_from_csv.R --meta_file FILE --channel1 CHANNEL --channel2 CHANNEL --gene1 NAME --gene2 NAME \n",
+  description = "Description: 
+  Makes a plot based on the .csv files provided (1 per sample).
+  The .csv files are exported from cytometry software after manually gating, compensating and exporting.",
+  option_list = option_list
+)
+opt <- parse_args(parser)
+
+
+
+#---- Setting libraries ----
 
 suppressPackageStartupMessages({
   library(dplyr)
@@ -11,7 +41,7 @@ suppressPackageStartupMessages({
 
 options(scipen = 999)
 
-# - - - - Setting functions - - - - -----
+#---- Setting functions ----
 
 tidying_tables <- function(myfile, ch1, ch2, name1, name2){
   metadata <- read.delim(myfile)
@@ -65,17 +95,8 @@ build_labels <- function(df, name1, name2, x_range = c(100, 10000000), y_range =
   return(label_summary)
 }
 
-# - - - - Code to run from command line - - - - ---- 
-# Ignore this first section to run from R Studio
-args <- commandArgs(trailingOnly=TRUE)
 
-meta_file <- args[1]
-ch1 <- args[2]
-ch2 <- args[3]
-name1 <- args[4]
-name2 <- args[5]
-
-# - - - - Code to run from within R - - - - ----
+#---- Code to run from within R ----
 # Uncomment the code to run from R Studio
 
 # Seting the working directory 
@@ -83,19 +104,25 @@ name2 <- args[5]
 #setwd(work.space)
 
 #meta_file <- "name_of_metadata_file.txt"
-#ch1 = "name of first channel"
-#ch2 = "name of second channel"
-#name1 = "name of the first gene"
-#name2 = "name of the second gene"
+#channel1 = "name of first channel"
+#channel2 = "name of second channel"
+#gene1 = "name of the first gene"
+#gene2 = "name of the second gene"
 
 
-# - - - IMPORT AND PROCESS DATA - - ----- 
+#---- IMPORT AND PROCESS DATA ---- 
 
-data <- tidying_tables(meta_file, ch1, ch2, name1, name2)
-data <- classify_populations(data, thresh1 = 100000, thresh2 = 100000, name1, name2) 
-label <- build_labels(data, name1, name2)
+data <- tidying_tables(myfile = opt$meta_file, 
+                       ch1 = opt$channel1, 
+                       ch2 = opt$channel2, 
+                       name1 = opt$gene1, 
+                       name2 = opt$gene2)
 
-#---- THEME SET ----
+data <- classify_populations(data, thresh1 = 100000, thresh2 = 100000, name1 = opt$gene1, name2 = opt$gene2) 
+
+label <- build_labels(data, name1 = opt$gene1, name2 = opt$gene2)
+
+#---- THEME SETTING ----
 theme_set(theme_bw()+
             theme(axis.title.y=element_text(size = 12),
                   axis.text.y=element_text(size = 12),
@@ -108,11 +135,11 @@ my_pal <- colorRampPalette(c('#5e4fa2ff','#4d71b2ff','#358abcff',
                              '#5db2acff','#7ecaa5ff','#ddf19aff','#fff9b6ff','#fed27fff','#fca65dff',
                              '#f7824cff','#ed6346ff','#ca354dff','#9e0142ff'))(250)
 
-# - - - MAKING THE PLOT - - - - - 
+#---- MAKING THE PLOT ----
 
 pdf("cytometry_hexplot.pdf", height =4, width =10)
 
-ggplot(data, aes(.data[[name2]], .data[[name1]]))+
+ggplot(data, aes(.data[[opt$gene1]], .data[[opt$gene2]]))+
   facet_wrap(~condition)+
   geom_hex(binwidth = 0.05, alpha = 0.9)+
   guides(fill = guide_colourbar(barwidth = 0.7, barheight = 15))+
@@ -120,7 +147,7 @@ ggplot(data, aes(.data[[name2]], .data[[name1]]))+
   scale_x_log10(labels = trans_format("log10", math_format(10^.x)))+
   scale_color_gradientn(colors = my_pal) +
   scale_fill_gradientn(colors = my_pal) +
-  geom_text(data = label, aes(x = .data[[name2]], y = .data[[name1]], hjust = hjust, vjust = vjust,
+  geom_text(data = label, aes(x = .data[[opt$gene2]], y = .data[[opt$gene1]], hjust = hjust, vjust = vjust,
                               label = paste0(population, "\n", percent)), size = 3)+
   coord_cartesian(xlim=c(100,10000000),ylim=c(100,10000000))+
   geom_vline(xintercept=100000,linetype="dashed",linewidth = 0.3, color = "gray35")+

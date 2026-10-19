@@ -1,6 +1,38 @@
 ##############################################
+#---- Adding help message ---- 
+# Ignore this first section to run from R Studio
 
-# - - - - Setting libraries - - - - -----
+if (!requireNamespace("optparse", quietly = TRUE)) {
+  install.packages("optparse")
+}
+
+suppressPackageStartupMessages({
+  library("optparse")
+})
+
+
+option_list <- list(make_option("--meta_file", type = "character", metavar = "FILE", 
+                                help = "Metadata table: sample and psth to the .csv file."),
+                    make_option("--compensate", type = "character", default = "no", metavar = "yes/no", 
+                                help = "Perform compensation (default: %default)"),
+                    make_option("--quality", type = "character", default = "no", metavar = "yes/no", 
+                                help = "Perform quality filtering (default: %default)"),
+                    make_option("--channel1", type = "character", metavar = "STR", 
+                                help = "Name of channel 1, with . instead of - (e.g. FL1.A)"),
+                    make_option("--channel2", type = "character", metavar = "STR", 
+                                help = "Name of channel 2, with . instead of - (e.g. FL2.A)")
+)
+
+parser <- OptionParser(
+  usage = "Rscript 1_flow_cytometry_from_csv.R --meta_file FILE --channel1 CHANNEL --channel2 CHANNEL --gene1 NAME --gene2 NAME \n",
+  description = "Description: 
+  Makes a plot based on the .csv files provided (1 per sample).
+  The .csv files are exported from cytometry software after manually gating, compensating and exporting.",
+  option_list = option_list
+)
+opt <- parse_args(parser)
+
+#---- Setting libraries ----
 # List of packages that will be used
 cran_packages <- c("dplyr", "tidyr", "ggplot2", "optparse")
 bioc_packages <- c("flowCore","openCyto","ggcyto","flowStats","flowAI")
@@ -40,7 +72,7 @@ options(scipen = 999)
 options(stringsAsFactors = FALSE)
 
 
-# - - - - Setting functions - - - - -----
+#---- Setting functions ----
 
 import_fcsfiles <- function(myfile){
   metadata <- read.delim(myfile)
@@ -85,49 +117,30 @@ quality_filter <- function(cytoset, afirmation){
 
 
 
-# Uncomment this part to run from R studio ----
+#---- Uncomment this part to run from R studio ----
 
 #work.space <- dirname(rstudioapi::getSourceEditorContext()$path)
 #setwd(work.space)
+
 #meta_file <- "example_metadata_fcs.txt"
 #compensate <- "yes"
 #quality <- "yes"
-#ch1 <- "FL1.A"
-#ch2 <- "FL2.A"
+#channel1 <- "FL1.A"
+#channel2 <- "FL2.A"
 
-
-# Comment this part to run from command line ----
-# arguments to be passed
-args <- commandArgs(trailingOnly=TRUE)
-if (length(args)!=5) {
-  stop("The following arguments must be provided: 
-       -metadata (see example metadata file) 
-       -compensation [yes/no]
-       -quality-control [yes/no] 
-       -channel1 (example FL1-A) 
-       -channel2 (example FL2-A) 
-       \n", call.=FALSE)
-}
-
-meta_file <- args[1]
-compensate <- args[2]
-quality <- args[3]
-ch1 <- args[4]
-ch2 <- args[5]
-
-#--- IMPORT SAMPLES TO CYTOSET AND PROCESS ----
+#---- IMPORT SAMPLES TO CYTOSET AND PROCESS ----
 
 # Import fcs files as cytoset
-fcsset <- import_fcsfiles(meta_file)
+fcsset <- import_fcsfiles(meta_file = opt$meta_file)
 
 # Compensate if needed
-fcsset_comp <- compensation(fcsset, compensate)
+fcsset_comp <- compensation(fcsset, compensate = opt$compensate)
 
 # Check quality control and filter
-fcsset_qc <- quality_filter(fcsset_comp, quality)
+fcsset_qc <- quality_filter(fcsset_comp, quality = opt$quality)
 
 
-# GATES AND VISUALIZATION PLOTS - - - - - - -----
+#---- GATES AND VISUALIZATION PLOTS ----
 
 # create gating object
 gatingset <- GatingSet(fcsset_qc)
@@ -187,7 +200,7 @@ recompute(gatingset)
 
 # Transform the channels that will be plotted to log scale 
 # m parameter is data specific. Adjust it to your own.
-transformation <- estimateLogicle(gatingset[[1]], channels = c(ch1, ch2), m = 7)
+transformation <- estimateLogicle(gatingset[[1]], channels = c(opt$channel1, opt$channel2), m = 7)
 transformed_gateset <- transform(gatingset, transformation)
 
 # gate 3: population of interest
