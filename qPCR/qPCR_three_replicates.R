@@ -147,7 +147,7 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
 }
 
 transformar_log <- function(dframe){
-  dframe$EXP_NORM[dframe$EXP_NORM == 0] <- 0.00001 #for logs sake
+  dframe$EXP_NORM[dframe$EXP_NORM == 0] <- 0.00001 #for log's sake
   dframe <- dframe %>% mutate(LOG_NORM = log2(EXP_NORM))
   logarithm <- dframe %>% group_by(Amplicon, `Cell_line`, Treatment) %>% mutate(AVG_LOG = mean(LOG_NORM))
   logarithm <- logarithm %>% group_by(Amplicon) %>% mutate(REL_EXP = LOG_NORM - first(AVG_LOG))
@@ -183,6 +183,7 @@ calcular_resumen <- function(dframe, relative){
 #relative <- "control/cell_line"
 
 #data <- analiza_mis_reals(file_data, exp_data)
+#rel <- transformar_log(data)
 #resumen <- calcular_resumen(data, relative)
 
 
@@ -271,4 +272,6 @@ if (opt$include_all == "yes") {
 pdf("plot_relative_expression.pdf", height = he, width = wi)
 print(plot)
 dev.off()
+
+
 
