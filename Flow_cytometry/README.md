@@ -33,7 +33,8 @@ Rscript 1_flow_cytometry_from_csv.R example_metadata.txt FL1.A FL4.A NKX2.5 TNNT
 Output: 
 the script generate a pdf file named cytometry_hexplot.pdf (you can find the plot generated using the example data provided whithin this folder).
 
-<img width="900" alt="hexplot" src="https://github.com/user-attachments/assets/ac87e6e4-99d1-4563-b6ad-0e3b3a00e15d" />
+<img width="800" alt="hexplot" src="https://github.com/user-attachments/assets/eaac6fa0-beea-4d4a-8365-7c35f6e0bdb0" />
+
 
 *The example data for this analysis corresponds to cardiomyocytes derived from human pluripotent stem cells, at day 15 (previous to metabolic selection).*
 
@@ -56,6 +57,6 @@ the script generates 3 pdf files:
 -the last one to point and quantify the percentage of a specific population (Population_of_study)  
 Also a quality report is generated when quality-filter argument is set to "yes".
 
-<img width="3004" height="1204" alt="population_of_study" src="https://github.com/user-attachments/assets/105d2a69-040e-4451-bdd4-416189111b56" />  
+<img width="850" alt="population_of_study" src="https://github.com/user-attachments/assets/105d2a69-040e-4451-bdd4-416189111b56" />  
 
 *The example data for this analysis corresponds to day 3.5 of cardiac differentiation, when a Mesoderm Progenitor population forms (compared to pluripotent stem cells).*  
