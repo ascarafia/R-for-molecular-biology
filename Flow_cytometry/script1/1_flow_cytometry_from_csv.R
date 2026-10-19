@@ -84,10 +84,10 @@ build_labels <- function(df, name1, name2, x_range = c(100, 10000000), y_range =
   
   positions <- tibble(
     population = all_populations,
-    !!name1 := c(y_range[2], y_range[2], y_range[1], y_range[1]),
-    !!name2 := c(x_range[2], x_range[1], x_range[2], x_range[1]),
-    hjust    = c(1, 0, 1, 0),   
-    vjust    = c(1, 1, 0, 0))
+    !!name1 := c(x_range[2], x_range[2], x_range[1], x_range[1]),
+    !!name2 := c(y_range[2], y_range[1], y_range[2], y_range[1]),
+    hjust    = c(1, 1, 0, 0),
+    vjust    = c(1, 0, 1, 0))
   
   label_summary <- summary_df %>%
     full_join(positions, by = "population")
@@ -108,6 +108,10 @@ build_labels <- function(df, name1, name2, x_range = c(100, 10000000), y_range =
 #channel2 = "name of second channel"
 #gene1 = "name of the first gene"
 #gene2 = "name of the second gene"
+
+#data <- tidying_tables(meta_file, channel1, channel2, gene1, gene2)
+#data <- classify_populations(data, thresh1 = 100000, thresh2 = 100000, gene1, gene2) 
+#label <- build_labels(data, gene1, gene2)
 
 
 #---- IMPORT AND PROCESS DATA ---- 
@@ -139,7 +143,7 @@ my_pal <- colorRampPalette(c('#5e4fa2ff','#4d71b2ff','#358abcff',
 
 pdf("cytometry_hexplot.pdf", height =4, width =10)
 
-ggplot(data, aes(.data[[opt$gene1]], .data[[opt$gene2]]))+
+ggplot(data, aes(x= .data[[opt$gene1]], y= .data[[opt$gene2]]))+
   facet_wrap(~condition)+
   geom_hex(binwidth = 0.05, alpha = 0.9)+
   guides(fill = guide_colourbar(barwidth = 0.7, barheight = 15))+
@@ -147,7 +151,7 @@ ggplot(data, aes(.data[[opt$gene1]], .data[[opt$gene2]]))+
   scale_x_log10(labels = trans_format("log10", math_format(10^.x)))+
   scale_color_gradientn(colors = my_pal) +
   scale_fill_gradientn(colors = my_pal) +
-  geom_text(data = label, aes(x = .data[[opt$gene2]], y = .data[[opt$gene1]], hjust = hjust, vjust = vjust,
+  geom_text(data = label, aes(x = .data[[opt$gene1]], y = .data[[opt$gene2]], hjust = hjust, vjust = vjust,
                               label = paste0(population, "\n", percent)), size = 3)+
   coord_cartesian(xlim=c(100,10000000),ylim=c(100,10000000))+
   geom_vline(xintercept=100000,linetype="dashed",linewidth = 0.3, color = "gray35")+

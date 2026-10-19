@@ -11,14 +11,20 @@ All scripts require as input a Metadata table, indicating condition/sample and i
 | knockout  | example_knockout.csv  |
 
 
+**Instructions to run:**
+For all scripts, you can print a help message by typing:
+```bash
+Rscript <script name> --help
+```
+This will tell you the required arguments and their types.
+
+
+
 ## Script 1 - 2-AXIS PLOT - - - - 
 
 The script 1 takes as input a metadata table pointing to csv tables of fluorescence, assuming compensation and gating of singlets (single cells) has been done inside the software of the cytometer (such as Accuri C6). You can follow this [video tutorial](https://www.youtube.com/watch?v=TdzVxcGLVzU&t=37s) to see how the export of the data was done (minutes from 0 to 4:16).
 
-Required arguments:
-```bash
-Rscript <script name> <metadata file> <name of channel y-axis> <name of channel x-axis> <name of gene y-axis> <name of gene x-axis>
-```
+
 Example command:
 ```bash
 Rscript 1_flow_cytometry_from_csv.R example_metadata.txt FL1.A FL4.A NKX2.5 TNNT2
@@ -39,10 +45,6 @@ First, you will most likely have to change the parameters of the gates created, 
 Second, I recommend you run this script from RStudio. For some reason, the first time running from command line there are some adjustments to make. 
 
 
-Required arguments:
-```bash
-Rscript <script name> <metadata file> <compensation [yes/no]> <quality-filter [yes/no]> <name of channel y-axis> <name of channel x-axis> 
-```
 Example command:
 ```bash
 Rscript 2_flow_cytometry_from_fcs.R example_metadata_fcs.txt yes no FL1-A FL2-A 
