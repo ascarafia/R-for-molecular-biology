@@ -4,14 +4,15 @@ Don't forget that these analyses come from one replicate of a 3-replicate experi
 
 All scripts require as input a Metadata table, indicating condition/sample and its corresponding file name, like this:
 
-| condition | file_name             |
-|-----------|------------------------|
-| control   | example_control.csv   |
-| wildtype  | example_wildtype.csv  |
-| knockout  | example_knockout.csv  |
+| condition | file_name     |
+|-----------|---------------|
+| control   | control.csv   |
+| wildtype  | wildtype.csv  |
+| knockout  | knockout.csv  |
 
 
 **Instructions to run:**
+
 For all scripts, you can print a help message by typing:
 ```bash
 Rscript <script name> --help
@@ -41,6 +42,7 @@ the script generate a pdf file named cytometry_hexplot.pdf (you can find the plo
 ## Script 2 - 2-AXIS PLOT - - - - 
 
 The starting point of this script is a metadata table pointing to .fcs files that are exported from the cytometer software (such as Accuri C6).   
+
 NOTES:  
 First, you will most likely have to change the parameters of the gates created, as gates change for different cell types. You can always add more gates if needed following the code logic on the first 3 gates.  
 Second, I recommend you run this script from RStudio. For some reason, the first time running from command line there are some adjustments to make. 
@@ -54,9 +56,26 @@ Rscript 2_flow_cytometry_from_fcs.R example_metadata_fcs.txt yes no FL1-A FL2-A
 Output: 
 the script generates 3 pdf files:  
 -the first two to visualize where the filtering gates are being placed (gate1_cells and gate2_singlets)  
--the last one to point and quantify the percentage of a specific population (Population_of_study)  
+
+These two plots are meant to help you see how to adjust the gates. Gate 1 filters out the debris and gate 2 separates the singletes. You will find both plots at the bottom, below the final plot.
+
+-the last plot squares and quantifies the percentage of a specific population (Population_of_study)  
 Also a quality report is generated when quality-filter argument is set to "yes".
 
+
+**FINAL PLOT**
+
 <img width="850" alt="population_of_study" src="https://github.com/user-attachments/assets/105d2a69-040e-4451-bdd4-416189111b56" />  
+
+Intermediary plots:
+
+Gate 1: cells
+
+<img width="650" alt="gate1" src="https://github.com/user-attachments/assets/b8713fc7-0420-40e2-9166-d41ccd929308" />
+
+Gate 2: singlets
+
+<img width="650" alt="gate2" src="https://github.com/user-attachments/assets/8071a062-945a-4ddb-940d-58eb90dc8aae" />
+
 
 *The example data for this analysis corresponds to day 3.5 of cardiac differentiation, when a Mesoderm Progenitor population forms (compared to pluripotent stem cells).*  
