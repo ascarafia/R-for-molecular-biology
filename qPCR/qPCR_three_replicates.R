@@ -218,7 +218,7 @@ rel <- transformar_log(data)
 resumen <- calcular_resumen(data, relative = opt$relative)
 
 write.table(resumen, "table_relative_summary.txt",sep = "\t", quote = F, row.names = F)
-write.table(data, "table_relative_expression.txt",sep = "\t", quote = F, row.names = F)
+write.table(rel, "table_relative_expression.txt",sep = "\t", quote = F, row.names = F)
 
 
 #---- SETTING THEME AND PLOT PARAMETERS ----
