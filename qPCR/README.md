@@ -76,7 +76,7 @@ If you select timeseries to be "yes" a dashed line Will be added to your plot, c
 
 IMPORTANT NOTE: This is done for 1 replicate of a 3-replicate experiment. The plot is meant to be a visual help for you to get a general idea how the experiment went. Assuming you calculate the values for all 3 biological replicates and include the statistical analysis, plotting normalized expresión of genes is perfectly reasonable and correct! However, many scientist struggle to quickly interpret them. For that reason, I suggest once you have all 3 replicates you make a final plot. You can do so with the second script that calculates and plots the mean gene expression relative to a control, including the statistical values.
 
-<img width="700" alt="first_script" src="https://github.com/user-attachments/assets/adcb567c-465b-4a91-a077-d27e33b02632" />
+<img width="700" alt="first_script" src="https://github.com/user-attachments/assets/0dbd8886-6fee-4c6e-abe8-534c4e673b7e" />
 
 
 
@@ -114,8 +114,8 @@ This file must be tab delimited and indicate the folowwing fields: cell lines (s
 |---------------|-----------|
 | CellLine      |     WT    |
 | CellLine      |     KO    |
-| Conditions    |     T0    | 
-| Conditions    |     T14   |
+| Conditions    |     day0  | 
+| Conditions    |     day14 |
 | Genes         |    GENE1  |
 | Genes         |    GENE2  |
 | Genes         |    GENE3  |
@@ -144,7 +144,7 @@ Sometimes it helps to plot each individual replicate along the mean of the measu
 
 
 OUTPUT:
-The script generates two tables and one plot (for now).
+The script generates two tables and one plot.
 
 1 "table_relative_expression.txt": this will be used to perform statistical analysis.
 
@@ -152,7 +152,8 @@ The script generates two tables and one plot (for now).
 
 3 "plot_relative_expression.pdf": plot of the mean mentioned above plus an errorbar of the standard error of the mean.
 
-<img width="500"  alt="second_script" src="https://github.com/user-attachments/assets/e761e773-4f24-4750-8a28-dfdb72597121" />
+<img width="500" alt="second_script" src="https://github.com/user-attachments/assets/f8fc0c34-df93-4517-91f2-058e1fc67380" />
+
 
 
 
