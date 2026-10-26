@@ -64,8 +64,8 @@ options(stringsAsFactors = FALSE)
 
 import_tables <- function(metadata_file, channel){
   metadata  <- read.delim(metadata_file, header = TRUE)
-  file_list <- metadata[, 1]
-  condition <- metadata[, 2]
+  file_list <- metadata[, 2]
+  condition <- metadata[, 1]
   tidy_data <- data.frame()
   for (i in seq_along(file_list)) {
     data <- read.csv(file_list[i]) %>%

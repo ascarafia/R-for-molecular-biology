@@ -1,4 +1,4 @@
-condition	file_name
+sample	file_name
 control	control.csv
 wildtype	wildtype.csv
 knockout	knockout.csv
