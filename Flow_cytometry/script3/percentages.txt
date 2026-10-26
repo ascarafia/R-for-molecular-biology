@@ -1,0 +1,9 @@
+treatment percentage negative
+Control 0.1 99.9
+No_doxy 97.87 2.13
+2000ng/ml 66.17 33.83
+1000ng/ml 66.33 33.67
+500ng/ml 47.66 52.34
+250ng/ml 44.43 55.57
+125ng/ml 48.59 51.41
+62.5ng/ml 51.83 48.17
