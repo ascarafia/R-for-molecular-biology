@@ -2,9 +2,9 @@
 
 Don't forget that these analyses come from one replicate of a 3-replicate experiment, and as such, they are meant to be representative of the results you see consistently across replicates. These type of representative figures are supposed to be accompained by a summary plot describing all measures obtained from the 3 replicates (such as a bar plot with percentages, with a statical analysis stating whether the results are significant).
 
-All scripts require as input a Metadata table, indicating condition/sample and its corresponding file name, like this:
+All scripts require as input a Metadata table, indicating sample and its corresponding file name, like this:
 
-| condition | file_name     |
+| sample | file_name     |
 |-----------|---------------|
 | control   | control.csv   |
 | wildtype  | wildtype.csv  |
@@ -39,6 +39,9 @@ the script generate a pdf file named cytometry_hexplot.pdf (you can find the plo
 
 *The example data for this analysis corresponds to cardiomyocytes derived from human pluripotent stem cells, at day 15 (previous to metabolic selection).*
 
+
+
+
 ## Script 2 - 2-AXIS PLOT - - - - 
 
 The starting point of this script is a metadata table pointing to .fcs files that are exported from the cytometer software (such as Accuri C6).   
@@ -67,15 +70,37 @@ Also a quality report is generated when quality-filter argument is set to "yes".
 
 <img width="850" alt="population_of_study" src="https://github.com/user-attachments/assets/105d2a69-040e-4451-bdd4-416189111b56" />  
 
+
 Intermediary plots:
 
-Gate 1: cells
-
-<img width="650" alt="gate1" src="https://github.com/user-attachments/assets/b8713fc7-0420-40e2-9166-d41ccd929308" />
-
-Gate 2: singlets
-
-<img width="650" alt="gate2" src="https://github.com/user-attachments/assets/8071a062-945a-4ddb-940d-58eb90dc8aae" />
+Gate 1: cells             |  Gate 2: singlets
+:-------------------------:|:-------------------------:
+<img width="650" alt="gate1" src="https://github.com/user-attachments/assets/b8713fc7-0420-40e2-9166-d41ccd929308" />  |  <img width="650" alt="gate2" src="https://github.com/user-attachments/assets/8071a062-945a-4ddb-940d-58eb90dc8aae" />
 
 
 *The example data for this analysis corresponds to day 3.5 of cardiac differentiation, when a Mesoderm Progenitor population forms (compared to pluripotent stem cells).*  
+
+
+
+
+## Script 3 - RIDGELINE PLOT - - - - 
+
+People might argue that it is better to use cytometry-specific software for every step of analysis, including plotting. I disagree.
+
+Data generated in almost any other software can be funneled into R. Once you centralize data into R for analyses and data viz, you can control every detail of your plots. This keeps all your figures visually consistent, and your whole analysis in one place. Plus, ggplot really makes pretty figures. 
+
+This script takes as input a metadata table pointing to .csv tables of fluorescence, assuming compensation and gating of singlets (single cells) has been done inside the software of the cytometer (just as script 1), and another 3 parameters: 
+
+Example command:
+```bash
+Rscript 3_flow_cytometry_ridges.R --file metadata.txt --channel FL2.A --threshold 10000 --palette [warm/viridis]
+```
+
+It takes only 1 channel to plot density of events (cells), and calculates percentages of positive and negative events using a cut off value you provide with the --threshold parameter. You can choose betweeen a warm or viridis palette. If you don't like either one, you can set your own palette by editing the script. I always recommend using gray colors for the controls.
+
+Output: 
+the script generates a plot and a tbale with the calculated percentages.
+
+<img width="500" alt="ridgeline_plot" src="https://github.com/user-attachments/assets/2300c5ec-1951-401f-9071-83d02f4f74ec" />
+
+*The example data for this analysis corresponds to a dose-response curve to find the best concentration of doxycycline to repress a target gene. High levels were toxic for the cells, low levels had less effect.*  
